@@ -22,7 +22,7 @@ static const char *program_exec;
 static const char *program_path;
 
 /* This makes sure we always have a __debug section. */
-MINILOG_DEBUG_DEFINE(dummy);
+MINILOG_DEBUG_DEFINE(dummy)
 
 void minilog_info(const char *format, ...) {
   va_list ap;
