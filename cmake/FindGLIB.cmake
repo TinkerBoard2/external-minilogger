@@ -8,4 +8,4 @@ else()
     pkg_check_modules(GLIB2 IMPORTED_TARGET "glib-2.0>=${MIN_GLIB_VERSION}" "gobject-2.0>=${MIN_GLIB_VERSION}" "gio-2.0>=${MIN_GLIB_VERSION}")
 endif()
 
-find_package_handle_standard_args(GLib DEFAULT_MSG GLIB2_LIBRARIES GLIB2_CFLAGS GLIB2_LIBRARY_DIRS)
+find_package_handle_standard_args(GLib DEFAULT_MSG GLIB2_LIBRARIES GLIB2_CFLAGS)
