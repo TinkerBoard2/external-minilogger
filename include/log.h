@@ -41,11 +41,11 @@ void minilog_warn(const char *format, ...) __attribute__((format(printf, 1, 2)))
 void minilog_error(const char *format, ...) __attribute__((format(printf, 1, 2)));
 void minilog_debug(const char *format, ...) __attribute__((format(printf, 1, 2)));
 
-#define minilog_warn_once(fmt, arg...)                                           \
+#define minilog_warn_once(fmt, ...)                                           \
   do {                                                                         \
     static bool printed;                                                       \
     if (!printed) {                                                            \
-      minilog_warn(fmt, ##arg);                                                  \
+      minilog_warn(fmt, __VA_ARGS__);                                                  \
       printed = true;                                                          \
     }                                                                          \
   } while (0)
@@ -55,7 +55,7 @@ void minilog_debug(const char *format, ...) __attribute__((format(printf, 1, 2))
       __attribute__((used, SECTION("__debug"), aligned(8))) = {                \
           #name, __FILE__, MINILOG_DEBUG_FLAG_ALIAS};
 
-#define DBG(fmt, arg...)                                                       \
+#define DBG(fmt, ...)                                                       \
   do {                                                                         \
     static struct minilog_debug_desc __minilog_debug_desc                          \
         __attribute__((used, SECTION("__debug"), aligned(8))) = {              \
@@ -63,7 +63,7 @@ void minilog_debug(const char *format, ...) __attribute__((format(printf, 1, 2))
             .flags = MINILOG_DEBUG_FLAG_DEFAULT,                                 \
     };                                                                         \
     if (__minilog_debug_desc.flags & MINILOG_DEBUG_FLAG_PRINT)                     \
-      minilog_debug("%s:%s() " fmt, __FILE__, __FUNCTION__, ##arg);              \
+      minilog_debug("%s:%s() " fmt, __FILE__, __FUNCTION__, __VA_ARGS__);              \
   } while (0)
 
 #ifdef __cplusplus
