@@ -5,7 +5,9 @@
 #include "backtrace.h"
 #include "log.h"
 
+#ifdef __cplusplus
 #include <cxxabi.h>
+#endif
 #include <dlfcn.h>
 #include <glib.h>
 #include <limits.h>
@@ -14,14 +16,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#if !__APPLE__
 #define UNW_LOCAL_ONLY
 #include <libunwind.h>
 #ifndef __USE_GNU
 #define __USE_GNU
 #endif
 #include <ucontext.h>
+#else
+#include <libgen.h>
+#include <execinfo.h>
+#endif
 
 void show_backtrace(void) {
+#if !__APPLE__
   unw_cursor_t cursor;
   unw_context_t uc;
   unw_word_t ip, sp;
@@ -60,4 +68,23 @@ void show_backtrace(void) {
     frame_id++;
   }
   minilog_error("+++++++++++++++++++++++++++");
+#else
+#define SIZE 100
+  int nptrs;
+  void *buffer[SIZE];
+  char **strings;
+
+  nptrs = backtrace(buffer, SIZE);
+  strings = backtrace_symbols(buffer, nptrs);
+  if (strings == NULL) {
+    perror("backtrace_symbols");
+    exit(EXIT_FAILURE);
+  }
+
+  for (int j = 0; j < nptrs; j++) {
+    minilog_error("%s\n", strings[j]);
+  }
+
+  free(strings);
+#endif
 }

@@ -74,8 +74,10 @@ static void signal_setup(sighandler_t handler) {
   sigaction(SIGPIPE, &sa, NULL);
 }
 
+#if !__APPLE__
 extern struct minilog_debug_desc __start___debug[];
 extern struct minilog_debug_desc __stop___debug[];
+#endif
 
 static char **enabled = NULL;
 
@@ -135,7 +137,9 @@ int __minilog_log_init(const char *program, const char *debug, bool detach,
   if (debug)
     enabled = g_strsplit_set(debug, ":, ", 0);
 
+#if !__APPLE__
   __minilog_log_enable(__start___debug, __stop___debug);
+#endif
 
   if (!detach)
     option |= LOG_PERROR;
@@ -143,7 +147,11 @@ int __minilog_log_init(const char *program, const char *debug, bool detach,
   if (backtrace)
     signal_setup(signal_handler);
 
+#if !__APPLE__
   openlog(basename(program), option, LOG_DAEMON);
+#else
+  openlog(g_path_get_basename(program), option, LOG_DAEMON);
+#endif
 
   syslog(LOG_INFO, "%s version %s", program_name, program_version);
 

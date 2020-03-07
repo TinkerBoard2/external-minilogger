@@ -6,10 +6,12 @@ project(minilogger
 
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
+if (NOT APPLE)
 set(MIN_Libunwind_VERSION 1.31)
 find_package(Libunwind REQUIRED)
+endif()
 set(MIN_GLIB_VERSION 2.32.0)
-set(GLIB_REQUIRED 2.32.0)
+set(MIN_GLIB_VERSION 2.32.0)
 find_package(GLIB REQUIRED)
 
 add_library(minilogger
@@ -19,14 +21,21 @@ add_library(minilogger
 
 add_library(MiniLogger::minilogger ALIAS minilogger)
 
-target_compile_options(minilogger PRIVATE ${GLIB2_CFLAGS})
+if (NOT APPLE)
+    target_compile_options(minilogger PRIVATE -rdynamic)
+endif()
+target_compile_options(minilogger PUBLIC ${GLIB2_CFLAGS})
+target_compile_options(minilogger PRIVATE -fno-exceptions -fno-rtti)
+target_compile_options(minilogger PRIVATE -fstack-protector-all -fstack-check)
 target_compile_options(minilogger PRIVATE -Wno-variadic-macros)
 target_compile_options(minilogger PRIVATE -g -ggdb -gdwarf)
-target_compile_options(minilogger PRIVATE -rdynamic -funwind-tables)
-target_compile_features(minilogger PRIVATE cxx_auto_type)
+target_compile_options(minilogger PRIVATE -funwind-tables)
 target_compile_options(minilogger PRIVATE
     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
     -Wall -Wextra -Wpedantic>)
+
+target_compile_features(minilogger PRIVATE cxx_auto_type)
+target_compile_features(minilogger PRIVATE cxx_std_11)
 
 target_include_directories(minilogger
     PUBLIC
@@ -37,11 +46,19 @@ target_include_directories(minilogger
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
+link_directories(BEFORE ${GLIB2_LIBRARY_DIRS})
+
+target_link_libraries(minilogger
+    PUBLIC 
+    ${GLIB2_LIBRARIES}
+)
+
+if (NOT APPLE)
 target_link_libraries(minilogger
     PUBLIC
-    ${GLIB2_LIBRARIES}
     ${LIBUNWIND_LIBRARIES}
 )
+endif()
 
 include(GNUInstallDirs)
 set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/MiniLogger)

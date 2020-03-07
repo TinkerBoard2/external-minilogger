@@ -9,7 +9,7 @@ indent_style = space
 [BUILD]
 indent_size = 4
 
-[CMakeLists.*]
+[CMakeLists.*,*.cmake]
 indent_size = 4
 
 [*.{h,hpp,cpp,cc}]
