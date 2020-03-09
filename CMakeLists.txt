@@ -11,7 +11,6 @@ set(MIN_Libunwind_VERSION 1.31)
 find_package(Libunwind REQUIRED)
 endif()
 set(MIN_GLIB_VERSION 2.32.0)
-set(MIN_GLIB_VERSION 2.32.0)
 find_package(GLIB REQUIRED)
 
 add_library(minilogger
@@ -19,7 +18,7 @@ add_library(minilogger
     src/backtrace.cpp
     src/log.cpp)
 
-add_library(MiniLogger::minilogger ALIAS minilogger)
+add_library(MiniLogger::MiniLogger ALIAS minilogger)
 
 if (NOT APPLE)
     target_compile_options(minilogger PRIVATE -rdynamic)
@@ -40,7 +39,7 @@ target_compile_features(minilogger PRIVATE cxx_std_11)
 target_include_directories(minilogger
     PUBLIC
         $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/minilogger>
         $<BUILD_INTERFACE:${GLIB2_INCLUDE_DIR}>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -96,6 +95,7 @@ configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/MiniLoggerConfig.c
 )
 
 install(FILES
+    ${CMAKE_CURRENT_LIST_DIR}/cmake/FindGLIB.cmake
     ${CMAKE_CURRENT_LIST_DIR}/cmake/FindLibunwind.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/MiniLoggerConfig.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/MiniLoggerConfigVersion.cmake
