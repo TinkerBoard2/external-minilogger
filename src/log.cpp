@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "log.h"
-#include "backtrace.h"
+#include "minilogger/log.h"
+#include "minilogger/backtrace.h"
 
 #include <dlfcn.h>
 #include <glib.h>

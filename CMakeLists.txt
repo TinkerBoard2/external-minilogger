@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.8...3.16 FATAL_ERROR)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
+
 project(minilogger
     LANGUAGES C CXX
     VERSION 1.0.0)
@@ -10,8 +13,7 @@ if (NOT APPLE)
 set(MIN_Libunwind_VERSION 1.31)
 find_package(Libunwind REQUIRED)
 endif()
-set(MIN_GLIB_VERSION 2.32.0)
-find_package(GLIB REQUIRED)
+find_package(GLib2 REQUIRED)
 
 add_library(minilogger
     STATIC
@@ -23,7 +25,6 @@ add_library(MiniLogger::MiniLogger ALIAS minilogger)
 if (NOT APPLE)
     target_compile_options(minilogger PRIVATE -rdynamic)
 endif()
-target_compile_options(minilogger PUBLIC ${GLIB2_CFLAGS})
 target_compile_options(minilogger PRIVATE -fno-exceptions -fno-rtti)
 target_compile_options(minilogger PRIVATE -fstack-protector-all -fstack-check)
 target_compile_options(minilogger PRIVATE -Wno-variadic-macros)
@@ -39,17 +40,14 @@ target_compile_features(minilogger PRIVATE cxx_std_11)
 target_include_directories(minilogger
     PUBLIC
         $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/minilogger>
-        $<BUILD_INTERFACE:${GLIB2_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-link_directories(BEFORE ${GLIB2_LIBRARY_DIRS})
-
 target_link_libraries(minilogger
-    PUBLIC 
-    ${GLIB2_LIBRARIES}
+    PUBLIC
+    GLib2::glib
 )
 
 if (NOT APPLE)
@@ -95,7 +93,7 @@ configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/MiniLoggerConfig.c
 )
 
 install(FILES
-    ${CMAKE_CURRENT_LIST_DIR}/cmake/FindGLIB.cmake
+    ${CMAKE_CURRENT_LIST_DIR}/cmake/FindGLib2.cmake
     ${CMAKE_CURRENT_LIST_DIR}/cmake/FindLibunwind.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/MiniLoggerConfig.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/MiniLoggerConfigVersion.cmake

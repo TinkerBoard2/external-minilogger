@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "backtrace.h"
-#include "log.h"
+#include "minilogger/backtrace.h"
+#include "minilogger/log.h"
 
 #ifdef __cplusplus
 #include <cxxabi.h>

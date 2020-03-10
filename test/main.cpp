@@ -5,8 +5,8 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-#include "backtrace.h"
-#include "log.h"
+#include "minilogger/backtrace.h"
+#include "minilogger/log.h"
 
 void crash() {
   volatile int i = *(int *)7;
