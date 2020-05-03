@@ -9,7 +9,11 @@ project(minilogger
 
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
-if (NOT APPLE)
+option(MINILOGGER_USE_LIBUNWIND "use libunwind as unwinder" OFF)
+if (APPLE)
+    set(MINILOGGER_USE_LIBUNWIND OFF)
+endif()
+if (MINILOGGER_USE_LIBUNWIND)
 set(MIN_Libunwind_VERSION 1.31)
 find_package(Libunwind REQUIRED)
 endif()
@@ -50,7 +54,8 @@ target_link_libraries(minilogger
     GLib2::glib
 )
 
-if (NOT APPLE)
+if (MINILOGGER_USE_LIBUNWIND)
+target_compile_options(minilogger PRIVATE -DUSE_LIBUNWIND)
 target_link_libraries(minilogger
     PUBLIC
     ${LIBUNWIND_LIBRARIES}

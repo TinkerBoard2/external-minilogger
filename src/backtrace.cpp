@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#if !__APPLE__
+#ifdef USE_LIBUNWIND
 #define UNW_LOCAL_ONLY
 #include <libunwind.h>
 #ifndef __USE_GNU
@@ -29,7 +29,7 @@
 #endif
 
 void show_backtrace(void) {
-#if !__APPLE__
+#ifdef USE_LIBUNWIND
   unw_cursor_t cursor;
   unw_context_t uc;
   unw_word_t ip, sp;
